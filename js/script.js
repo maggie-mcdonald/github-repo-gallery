@@ -3,6 +3,8 @@ const username = "maggie-mcdonald";
 const repoList = document.querySelector(".repo-list"); // ul repo list
 const repoClass = document.querySelector(".repos"); //the class where all the repos appear
 const repoData = document.querySelector(".repo-data"); //the class of repoData currently hidden
+const backToRepoButton = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 const getData = async function () {
     const response = await fetch(`https://api.github.com/users/${username}`);
@@ -43,6 +45,7 @@ const displayRepos = function (repos) {
     repoItem.innerHTML = `<h3>${repo.name}</h3>`;
     repoList.append(repoItem);
   }
+  filterInput.classList.remove("hide");
 };
 
 repoList.addEventListener("click", function (e) {
@@ -69,6 +72,7 @@ repoList.addEventListener("click", function (e) {
   };
 
   const displayRepoInfo = function (repoInfo, languages) {
+    backToRepoButton.classList.remove("hide");
     repoData.innerHTML = "";
     repoData.classList.remove("hide");
     repoClass.classList.add("hide");
@@ -80,6 +84,26 @@ repoList.addEventListener("click", function (e) {
         <p>Languages: ${languages.join(", ")}</p>
         <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a> 
       `;
-     repoData.append(div);
+     repoData.append(div);    
  };
 
+ backToRepoButton.addEventListener("click" , function() {
+  repoClass.classList.remove("hide");
+  repoData.classList.add("hide");
+  backToRepoButton.classList.add("hide");
+ });
+
+ filterInput.addEventListener("input" , function (e) {
+  const searchText = e.target.value;
+  const repos = document.querySelectorAll(".repo");
+  const searchLowerText = searchText.toLowerCase();
+
+  for (const repo of repos) {
+      const repoLowerText = repo.innerText.toLowerCase();
+    if (repoLowerText.includes(searchLowerText)) {
+      repo.classList.remove("hide");
+    } else {
+      repo.classList.add("hide");
+    }
+  }
+ });
